@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<head>
+</head>
+<body>
+    <p> 
+        Formulario para expediente 
+    </p>
+    <form action="procesar.php" method="post">
+        <table border = "0">
+            <tr bgcolor = "white">
+                <th> 
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre">
+                </th>
+                <th> 
+                    <label for="correo">Correo Electronico:</label>
+                    <input type="email" id="correo" name="correo">
+                </th>
+            </tr>
+            <tr>
+                <th> 
+                    <label for="fecha">Fecha de nacimiento:</label>
+                    <input type="date" id="fecha" name="fecha">
+                </th>
+                <th> 
+                    <label for="color">Color favorito:</label>
+                    <input type="color" id="color" name="color">
+                </th>
+            </tr>    
+            <tr>
+                <th> 
+                    <label for="fecha">Genero: </label>
+                    <input type="radio" id="m" name="genero" value="M"><label> Masculino </label>
+                    <input type="radio" id="f" name="genero" value="F"><label> Femenino </label>
+                </th>
+                <td> 
+                    <label for="color"> Pais: </label>
+                    <select id="pais" name="pais">
+                        <option value=""> Seleccione:  </option>
+                        <option value="ec"> Ecuador </option>
+                        <option value="co"> Colombia </option>
+                        <option value="ve"> Venezuela </option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td> 
+                    <label for="comentarios">Comentarios: </label>
+                    <textarea id="comentarios" name="comentarios" rows="5"></textarea>
+                </td>
+                <td> 
+                    <input type="checkbox" id="acepto" name="acepto" required>
+                    <label for="acepto"> Acepto los terminos y condiciones </label>
+                </td>
+            </tr>
+        </table>    
+
+        <input type="submit" value="Enviar">
+        <input type="reset" value="Limpiar">
+
+    </form>
+
+</body>
+</html> 
+
