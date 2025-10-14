@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contáctenos</title>
+</head>
+<body>
+
+    <header>
+        <h1><center><i>Control de Puertos Marítimos MV</i></center></h1>
+    </header>
+    <nav>
+        <ul>
+        <li><a href="01_index.html">Inicio</a></li>
+        <li><a href="02_control_portuario.html">Nosotros</a></li> 
+        <li><a href="03_programacion.html">Programación de Barcos</a></li> 
+        <li><a href="04_tarifario.html">Tarifas</a></li>  
+        <li><a href="05_contacto.html">Contacto</a></li> 
+    </nav>
+    <main>
+        <section>
+            <h2>Ubicación</h2>
+            <p>Av. Costanera del Pacífico N.º 458, Sector Industrial Portuario,</p>
+            <p>Guayaquil, Provincia: Guayas, País: Ecuador</p>
+            <img src="https://lca.logcluster.org/sites/default/files/inline-images/image-20231027102636-1.png"  
+            width="500" 
+            height="300"
+            alt="Ubicación"
+            title="ubicacion">  
+        </section>
+
+        <section>
+            <h2>Medios de Contacto</h2>
+            <ul>
+                <li>Teléfono: 0981025714</li>
+                <li>Correo electrónico: control@puertosmaritimosmv.com</li> 
+            </ul>
+        </section>
+
+        <section>
+            <h2>Envíanos un mensaje</h2>
+
+            <form action="enviar_mensaje.php" method="post">
+                <p><b>Formulario de Contacto</b></p>
+
+                <label for="nombre">Nombre:</label><br>
+                <input type="text" id="nombre" name="nombre" required>
+                <br><br>
+                <label for="correo">Correo electrónico:</label><br>
+                <input type="email" id="correo" name="correo" required>
+                <br><br>
+                <label for="telefono">Teléfono:</label><br>
+                <input type="number" id="telefono" name="telefono">
+                <br><br>
+                <label for="asunto">Asunto:</label><br>
+                <input type="text" id="asunto" name="asunto">
+                <br><br>
+                <label for="mensaje">Mensaje:</label><br>
+                <textarea id="mensaje" name="mensaje" rows="5" cols="40"></textarea>
+                <br><br>
+                <input type="submit" value="Enviar">
+            </form>
+        </section>
+    </main>
+
+    <p><a href="01_index.html">Volver al inicio</a></p>
+
+</body>
+</html>
+
