@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<head>
+</head>
+<body>
+    <p> 
+        Registro Barcos M.V
+    </p>
+    <form action="procesar.php" method="post">
+        <table border = "0">
+            <tr bgcolor = "white">
+                <th> 
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre">
+                </th>
+                <th> 
+                    <label for="correo">Correo Electronico:</label>
+                    <input type="email" id="correo" name="correo">
+                </th>
+            </tr>
+            <tr>
+                <th> 
+                    <label for="fecha">Fecha de llegada:</label>
+                    <input type="date" id="fecha" name="fecha">
+                </th>
+                <td> 
+                    <label for="tipo"> Tipo de carga: </label>
+                    <select id="tipo" name="tipo">
+                        <option value=""> Seleccione:  </option>
+                        <option value="contenedores"> Contenedores </option>
+                        <option value="granel"> Granel </option>
+                        <option value="liquidos"> Liquidos </option>
+                        <option value="vehiculos"> Vehiculos </option>
+                        <option value="otros"> Otros </option>
+                    </select>
+                </td>
+            </tr>    
+            <tr>
+                <th> 
+                    <label for="fecha">  </label>
+                </th>
+            </tr>    
+            <tr>
+                <th> 
+                    <label for="fecha">  </label> 
+                </th>
+                <td> 
+                    <label for="puerto_salida"> Puerto de salida: </label>
+                    <select id="puerto_salida" name="puerto_salida">
+                        <option value=""> Seleccione:  </option>
+                        <option value="guayaquil"> Guayaquil </option>
+                        <option value="esmeraldas"> Esmeraldas </option>
+                        <option value="manta"> Manta </option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td> 
+                    <label for="comentarios">Comentarios: </label>
+                    <textarea id="comentarios" name="comentarios" rows="5"></textarea>
+                </td>
+                <td> 
+                    <input type="checkbox" id="acepto" name="acepto" required>
+                    <label for="acepto"> Acepto los terminos y condiciones </label>
+                </td>
+            </tr>
+        </table>    
+
+        <input type="submit" value="Enviar">
+        <input type="reset" value="Limpiar">
+
+    </form>
+
+</body>
+</html> 
+
