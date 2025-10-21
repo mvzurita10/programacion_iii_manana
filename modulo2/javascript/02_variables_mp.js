@@ -17,7 +17,7 @@ console.log("Tipo:", typeof(permisoAtracar));
 
 horaLlegada = undefined
 console.log("Hora de Llegada:", horaLlegada);
-console.log("Tipo:", typeof(horaLlegada));
+console.log("Tipo", typeof(horaLlegada));
 
 
 muelleAsignado = null
@@ -43,4 +43,6 @@ console.log("Tipo:", typeof(barco));
 muellesDisponibles = ["Muelle Norte", "Muelle Sur", "Muelle Este", "Muelle Oeste"]
 console.log("Muelles Disponibles:", muellesDisponibles);
 console.log("Tipo:", typeof(muellesDisponibles)); 
+
+
 
