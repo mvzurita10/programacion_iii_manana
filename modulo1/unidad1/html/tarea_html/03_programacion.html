@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programar Entrada/Salida de Barcos</title>
+</head>
+<body>
+
+    <header>
+        <h1><center><i>Control de Puertos Marítimos MV</i></center></h1> 
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="01_index.html">Inicio</a></li>
+            <li><a href="02_control_portuario.html">Nosotros</a></li> 
+            <li><a href="03_programacion.html">Programación de Barcos</a></li> 
+            <li><a href="04_tarifario.html">Tarifas</a></li> 
+            <li><a href="05_contacto.html">Contacto</a></li> 
+        </ul>
+    </nav>
+
+    <main>
+        <section>
+            <h2>Formulario de Programación de Entrada/Salida de Barcos</h2>
+            <p>Por favor, completa la siguiente información para registrar la entrada o salida de una embarcación en el puerto.</p>
+
+            <form action="procesar_barco.php" method="post">
+                <table border="1">
+                    <tr bgcolor="grey">
+                        <th>Datos del Capitán y la Embarcación</th>
+                        <th>Detalles de Operación Portuaria</th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <label for="nombre_capitan">Nombre del Capitán:</label><br>
+                            <input type="text" id="nombre_capitan" name="nombre_capitan" required><br><br>
+
+                            <label for="nombre_barco">Nombre del Barco:</label><br>
+                            <input type="text" id="nombre_barco" name="nombre_barco" required><br><br>
+
+                            <label for="nacionalidad">Nacionalidad del Barco:</label><br>
+                            <input type="text" id="nacionalidad" name="nacionalidad" required><br><br>
+
+                            <label for="matricula">Número de Matrícula:</label><br>
+                            <input type="text" id="matricula" name="matricula" required><br><br>
+
+                            <label for="tipo_barco">Tipo de Barco:</label><br>
+                            <select id="tipo_barco" name="tipo_barco">
+                                <option value="">--Seleccione--</option>
+                                <option value="carga">Carga</option>
+                                <option value="pesquero">Pesquero</option>
+                                <option value="pasajeros">Pasajeros</option>
+                                <option value="tanquero">Tanquero</option>
+                                <option value="militar">Militar</option>
+                            </select><br><br>
+                        </td>
+
+                        <td>
+                            <label for="tipo_operacion">Tipo de Operación:</label><br>
+                            <input type="radio" id="entrada" name="tipo_operacion" value="entrada">
+                            <label for="entrada">Entrada</label><br>
+                            <input type="radio" id="salida" name="tipo_operacion" value="salida">
+                            <label for="salida">Salida</label><br><br>
+
+                            <label for="fecha_operacion">Fecha de Operación:</label><br>
+                            <input type="date" id="fecha_operacion" name="fecha_operacion" required><br><br>
+
+                            <label for="hora_operacion">Hora Estimada:</label><br>
+                            <input type="time" id="hora_operacion" name="hora_operacion" required><br><br>
+
+                            <p>¿Transporta carga?</p>
+                            <input type="checkbox" id="carga" name="carga">
+                            <label for="carga">Sí, lleva carga</label><br><br>
+
+                            <label for="descripcion_carga">Descripción de la Carga:</label><br>
+                            <textarea id="descripcion_carga" name="descripcion_carga" rows="5" cols="30" placeholder="Ejemplo: contenedores, pescado, combustible..."></textarea><br><br>
+
+                            <label for="muelle_asignado">Muelle Asignado:</label><br>
+                            <input type="text" id="muelle_asignado" name="muelle_asignado"><br><br>
+                        </td>
+                    </tr>
+                </table>
+
+                <br>
+                <input type="submit" value="Enviar">
+                <input type="reset" value="Limpiar">
+
+            </form>
+        </section>
+    </main>
+
+    <p><a href="01_index.html">Volver al inicio</a></p>
+
+</body>
+</html>
+
