@@ -12,7 +12,7 @@ class Car{
     stop(){
         console.log(`${this.brand} ${this.model} se ha detenido`);
     }
-}
+} 
 
 const miCarro = new Car('Toyota', 'Corolla');
 miCarro.start();
