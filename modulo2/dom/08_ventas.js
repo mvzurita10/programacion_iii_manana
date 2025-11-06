@@ -17,7 +17,7 @@ formulario.addEventListener('submit', (e) => {
 });
 
 function renderizarCasa({ id, direccion, descripcion, precio }) {
-    const div = document.createElement('div');
+    const div = document.createElement('div'); 
     div.className = 'casa';
     div.setAttribute('data-id', id);
     div.innerHTML = `
@@ -35,7 +35,7 @@ contenedor.addEventListener('click', (e) => {
         const id = parseInt(tarjeta.getAttribute('data-id'));
         casas = casas.filter(c => c.id !== id);
         tarjeta.remove();
-    }
+    } 
 }); 
 
 
