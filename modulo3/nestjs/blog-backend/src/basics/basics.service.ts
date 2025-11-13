@@ -1,4 +1,4 @@
-import { Body, Injectable } from '@nestjs/common';
+import {Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BasicsService {
@@ -15,7 +15,7 @@ export class BasicsService {
         return {
             service: 'Blog-Backend',
             controller: '/basics/:parametro',
-            function: 'Get Example',
+            function: 'Get con parametros',
             parametroRecibido: parametro
         };
     }
@@ -47,4 +47,31 @@ export class BasicsService {
             parametro: parametro
         };
     }
+
+    calculoTriangulo(body: any): object {
+        const result: number = (body.base * body.altura) / 2;
+        return {
+            service: 'Blog-Backend',
+            controller: '/basics tipo post',
+            function:'Calculo de area de un triangulo',
+            parametro: body,
+            resultado: result
+        };
+    }
+
+    areaRectangulo(ancho: number, alto: number): object {
+        const result: number = ancho * alto;
+        return {
+            service: 'Blog-Backend',
+            controller: '/basics tipo delete',
+            function:'Calculo del area de un rectangulo',
+            ancho: ancho,
+            alto: alto,
+            resultado: result
+        };
+    }
+
+
 }
+
+
