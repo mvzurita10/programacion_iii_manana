@@ -1,16 +1,20 @@
-// CONTROL DE PUERTOS MARITIMOS - Manejo de errores en programación
+console.log("=== SISTEMA DE ASIGNACIÓN DE MUELLES ===");
 
 try {
-    console.log(barcoNoRegistrado);
-} catch (error) {
-    console.error("Error en el sistema del puerto:", error.message);
-}
+    let muelle = "Muelle 5";
+    let estadoMuelle = "En Reparación";
 
-try {
-    console.log("Intentando acceder al registro del barco en el sistema del puerto...");
-    throw new Error("Registro del barco no encontrado en la base de datos del puerto");
+    console.log(`Intentando asignar buque al ${muelle}...`);
+
+    if (estadoMuelle === "En Reparación") {
+        throw new Error("El muelle está inoperativo por mantenimiento.");
+    }
+
+    console.log("Asignación exitosa."); 
+
 } catch (error) {
-    console.error("Mensaje de error:", error.message);
+    console.error("¡ERROR CRÍTICO!: " + error.message);
+
 } finally {
-    console.log("Finalizando intento de acceso al registro del barco.");
+    console.log("Fin del proceso de asignación.");
 }

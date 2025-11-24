@@ -2,7 +2,7 @@ export class Vehiculo {
     public marca: string;
     public tipo: string;
     constructor(
-        marca: string;
+        marca: string,
         tipo: string
     ){
         this.marca=marca;
