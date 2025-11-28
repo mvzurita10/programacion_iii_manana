@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestor de Servicios Portuarios</title>
+    <script src="08_ventas_mp.js" defer></script>
+</head>
+<body>
+    <h1>Registro de Servicios a Buques</h1>
+    <form id="formulario">
+        <input type="text" id="nombreBuque" placeholder="Nombre del Buque" required>
+        <input type="text" id="servicio" placeholder="Servicio (Ej: Remolque, Agua)" required>
+        <input type="number" id="costo" placeholder="Costo ($)" required>
+        <button type="submit">Facturar Servicio</button>
+    </form>
+
+    <h3>Historial de Facturación:</h3>
+    <ul id="listaFacturas"></ul>
+</body>
+</html>

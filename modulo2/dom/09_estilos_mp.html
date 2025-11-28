@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Visualización Portuaria</title>
+    <script src="09_estilos_mp.js" defer></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            transition: background-color 0.5s, color 0.5s;
+            padding: 20px;
+        }
+
+        .panel-control {
+            border: 2px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        .modo-nocturno {
+            background-color: #1a237e; 
+            color: #e8eaf6; 
+        }
+
+        .modo-nocturno .panel-control {
+            border-color: #5c6bc0;
+            background-color: #283593;
+        }
+
+        .modo-nocturno button {
+            background-color: #3949ab;
+            color: white;
+            border: 1px solid #7986cb;
+        }
+
+        .alerta-activa {
+            border: 3px solid red !important;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="panel-control">
+        <h1>Torre de Control - Muelle 7</h1>
+        <p>Sistema de monitoreo visual de tráfico marítimo.</p>
+        <hr>
+        <p>Estado actual: <span id="textoEstado">Operativo</span></p>
+        
+        <button id="btnTema">Cambiar a Modo Nocturno</button>
+        <button id="btnEmergencia">Simular Emergencia</button>
+    </div>
+
+</body>
+</html>
