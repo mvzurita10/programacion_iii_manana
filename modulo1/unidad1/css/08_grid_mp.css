@@ -1,0 +1,17 @@
+.grid {
+    display: grid;
+    grid-template-columns: 200px 200px 200px;
+    gap: 10px;
+    background-color: aquamarine;
+    padding: 10px;
+}
+
+.item {
+    background-color: blue;
+    padding: 20px;
+    border: 2px solid white;
+    text-align: center;
+    border: 20px solid black;
+    box-shadow: 2px 2px 12px rgba(249, 248, 248, 0.921);
+}
+
