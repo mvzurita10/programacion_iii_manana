@@ -1,21 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { paginate, IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
 import { Post } from './post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Category } from '../categories/category.entity';
+import { QueryDto } from 'src/common/dto/query.dto';
 
-interface PostPaginationOptions extends IPaginationOptions {
-    search?: string;
-    searchField?: string;
-    sortBy?: string;
-    sortOrder?: 'ASC' | 'DESC';
-    }
-
-
-    @Injectable()
-    export class PostsService {
+@Injectable()
+export class PostsService {
     constructor(
         @InjectRepository(Post)
         private postsRepository: Repository<Post>,
@@ -41,28 +34,54 @@ interface PostPaginationOptions extends IPaginationOptions {
         }
     }
 
-    async findAll(options: PostPaginationOptions): Promise<Pagination<Post>> {
-        const { search, searchField, sortBy, sortOrder } = options;
-        const queryBuilder = this.postsRepository.createQueryBuilder('post');
-        queryBuilder.leftJoinAndSelect('post.category', 'category');
-        const allowedSearchFields = ['title', 'content'];
-        const allowedSortFields = ['id', 'title'];
-        if (search && searchField && allowedSearchFields.includes(searchField)) {
-        queryBuilder.andWhere(
-            `LOWER(post.${searchField}) LIKE :search`,
-            { search: `%${search.toLowerCase()}%` },
-        );
-        }
-        const orderField = sortBy && allowedSortFields.includes(sortBy) ? sortBy : 'id';
-        const orderDirection: 'ASC' | 'DESC' =
-        sortOrder === 'DESC' ? 'DESC' : 'ASC';
-        queryBuilder.orderBy(`post.${orderField}`, orderDirection);
-        return paginate<Post>(queryBuilder, {
-        page: options.page,
-        limit: options.limit,
-        });
-    }
+    async findAll(queryDto: QueryDto): Promise<Pagination<Post> | null> {
+        try {
+        const { page, limit, search, searchField, sort, order } = queryDto;
+        const queryBuilder = this.postsRepository.createQueryBuilder('post')
+            .leftJoinAndSelect('post.category', 'category');
 
+        if (search) {
+            if (searchField) {
+            switch (searchField) {
+                case 'title':
+                queryBuilder.where('post.title ILIKE :search', {
+                    search: `%${search}%`,
+                });
+                break;
+                case 'content':
+                queryBuilder.where('post.content ILIKE :search', {
+                    search: `%${search}%`,
+                });
+                break;
+                case 'category':
+                queryBuilder.where('category.name ILIKE :search', {
+                    search: `%${search}%`,
+                });
+                break;
+                default:
+                queryBuilder.where(
+                    '(post.title ILIKE :search OR post.content ILIKE :search OR category.name ILIKE :search)',
+                    { search: `%${search}%` },
+                );
+            }
+            } else {
+            queryBuilder.where(
+                '(post.title ILIKE :search OR post.content ILIKE :search OR category.name ILIKE :search)',
+                { search: `%${search}%` },
+            );
+            }
+        }
+
+        if (sort) {
+            queryBuilder.orderBy(`post.${sort}`, (order ?? 'ASC') as 'ASC' | 'DESC');
+        }
+
+        return await paginate<Post>(queryBuilder, { page, limit });
+        } catch (err) {
+        console.error('Error fetching posts:', err);
+        return null;
+        }
+    }
 
     async findOne(id: string): Promise<Post | null> {
         try {
@@ -72,6 +91,7 @@ interface PostPaginationOptions extends IPaginationOptions {
         return null;
         }
     }
+
     async update(id: string, dto: CreatePostDto): Promise<Post | null> {
         try {
         const post = await this.findOne(id);
@@ -103,5 +123,3 @@ interface PostPaginationOptions extends IPaginationOptions {
         }
     }
     }
-
-

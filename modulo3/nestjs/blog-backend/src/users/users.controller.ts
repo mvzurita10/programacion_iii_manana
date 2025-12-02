@@ -1,18 +1,22 @@
-import {Controller, Get, Post, Put, Delete, Body, Param,Query, 
-    BadRequestException, NotFoundException,UseInterceptors, UploadedFile,InternalServerErrorException
-    } from '@nestjs/common';
-    import { UsersService } from './users.service';
-    import { CreateUserDto } from './dto/create-user.dto';
-    import { UpdateUserDto } from './dto/update-user.dto';
-    import { SuccessResponseDto } from 'src/common/dto/response.dto';
-    import { Pagination } from 'nestjs-typeorm-paginate';
-    import { User } from './user.entity';
-    import { FileInterceptor } from '@nestjs/platform-express';
-    import { diskStorage } from 'multer';
+import {
+    Controller, Get, Post, Put, Delete, Body, Param,
+    Query, BadRequestException, NotFoundException,
+    UseInterceptors, UploadedFile,
+    InternalServerErrorException
+} from '@nestjs/common';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { SuccessResponseDto } from 'src/common/dto/response.dto';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { User } from './user.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { QueryDto } from 'src/common/dto/query.dto';
 
-    @Controller('users')
-    export class UsersController {
-    constructor(private readonly usersService: UsersService) { }
+@Controller('users')
+export class UsersController {
+    constructor(private readonly usersService: UsersService) {}
 
     @Post()
     async create(@Body() dto: CreateUserDto) {
@@ -22,27 +26,27 @@ import {Controller, Get, Post, Put, Delete, Body, Param,Query,
 
     @Get()
     async findAll(
-        @Query('page') page = 1,
-        @Query('limit') limit = 10,
-        @Query('search') search?: string,
-        @Query('searchField') searchField = 'name',
-        @Query('sortBy') sortBy = 'id',
-        @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
-    ) {
-        limit = Number(limit);
-        page = Number(page);
-        limit = limit > 100 ? 100 : limit;
+        @Query() query: QueryDto,
+        @Query('isActive') isActive?: string,
+    ): Promise<SuccessResponseDto<Pagination<User>>> {
+        if (query.limit && query.limit > 100) {
+        query.limit = 100;
+        }
 
-        const users = await this.usersService.findAll({
-        page,
-        limit,
-        search,
-        searchField,
-        sortBy,
-        sortOrder,
-        });
-        return new SuccessResponseDto('List Users successfully', users);
+        if (isActive !== undefined && isActive !== 'true' && isActive !== 'false') {
+        throw new BadRequestException('Invalid value for "isActive". Use "true" or "false".');
+        }
+
+        const result = await this.usersService.findAll(
+        query,
+        isActive === 'true',
+        );
+
+        if (!result) throw new InternalServerErrorException('Could not retrieve users');
+
+        return new SuccessResponseDto('Users retrieved successfully', result);
     }
+
     @Get(':id')
     async findOne(@Param('id') id: string) {
         const user = await this.usersService.findOne(id);
@@ -52,6 +56,7 @@ import {Controller, Get, Post, Put, Delete, Body, Param,Query,
 
     @Put(':id')
     async update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+        console.log("put update", dto);
         const user = await this.usersService.update(id, dto);
         if (!user) throw new NotFoundException('User not found');
         return new SuccessResponseDto('User updated successfully', user);
@@ -78,9 +83,10 @@ import {Controller, Get, Post, Put, Delete, Body, Param,Query,
         }
     }))
     async uploadProfile(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
+        console.log("put update profile",file);
         if (!file) throw new BadRequestException('Profile image is required');
         const user = await this.usersService.updateProfile(id, file.filename);
         if (!user) throw new NotFoundException('User not found');
         return new SuccessResponseDto('Profile image updated', user);
     }
-    }
+}
