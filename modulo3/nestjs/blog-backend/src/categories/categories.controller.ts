@@ -1,45 +1,63 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import {Controller, Get, Post, Put, Delete,Param, Body, Query, NotFoundException, InternalServerErrorException
+} from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { UseGuards } from '@nestjs/common';
-import { Pagination } from 'nestjs-typeorm-paginate/dist/pagination';
-import { Category } from './category.entity';
+import { SuccessResponseDto } from 'src/common/dto/response.dto';
 
-    @Controller('categories')
-    export class CategoriesController {
+@Controller('categories')
+export class CategoriesController {
     constructor(private readonly categoriesService: CategoriesService) {}
 
     @Post()
-    @UseGuards(JwtAuthGuard)
-    create(@Body() createCategoryDto: CreateCategoryDto) {
-        return this.categoriesService.create(createCategoryDto);
+        async create(@Body() dto: CreateCategoryDto) {
+        const category = await this.categoriesService.create(dto);
+        if (!category) throw new InternalServerErrorException('Failed to create category');
+        return new SuccessResponseDto('Category created successfully', category);
     }
 
     @Get()
-    findAll(
+        async findAll(
         @Query('page') page = 1,
         @Query('limit') limit = 10,
-    ): Promise<Pagination<Category>> {
+        @Query('search') search?: string,
+        @Query('searchField') searchField = 'name',
+        @Query('sortBy') sortBy = 'id',
+        @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
+    ){
+        limit = Number(limit);
+        page = Number(page);
         limit = limit > 100 ? 100 : limit;
-        return this.categoriesService.findAll({ page, limit });
+
+        const response = await this.categoriesService.findAll({
+        page,
+        limit,
+        search,
+        searchField,
+        sortBy,
+        sortOrder,
+        });
+        return new SuccessResponseDto('List Users successfully', response);
     }
 
-@Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.categoriesService.findOne(id);
+    @Get(':id')
+    async findOne(@Param('id') id: string) {
+        const category = await this.categoriesService.findOne(id);
+        if (!category) throw new NotFoundException('Category not found');
+        return new SuccessResponseDto('Category retrieved successfully', category);
     }
 
     @Put(':id')
-    @UseGuards(JwtAuthGuard)
-    update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-        return this.categoriesService.update(id, updateCategoryDto);
+    async update(@Param('id') id: string, @Body() dto: UpdateCategoryDto) {
+        const category = await this.categoriesService.update(id, dto);
+        if (!category) throw new NotFoundException('Category not found');
+        return new SuccessResponseDto('Category updated successfully', category);
     }
 
     @Delete(':id')
-    @UseGuards(JwtAuthGuard)
-    remove(@Param('id') id: string) {
-        return this.categoriesService.remove(id);
+    async remove(@Param('id') id: string) {
+        const category = await this.categoriesService.remove(id);
+        if (!category) throw new NotFoundException('Category not found');
+        return new SuccessResponseDto('Category deleted successfully', category);
     }
 }

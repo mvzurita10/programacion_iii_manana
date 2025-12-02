@@ -1,45 +1,90 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { paginate, IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { IPaginationOptions } from 'nestjs-typeorm-paginate/dist/interfaces';
-import { paginate } from 'nestjs-typeorm-paginate/dist/paginate';
-import { Pagination } from 'nestjs-typeorm-paginate/dist/pagination';
+
+interface CategoryPaginationOptions extends IPaginationOptions {
+    search?: string;
+    searchField?: string;
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
+    }
+
 
     @Injectable()
     export class CategoriesService {
     constructor(
         @InjectRepository(Category)
-        private readonly categoryRepository: Repository<Category>,
+        private readonly categoryRepo: Repository<Category>,
     ) {}
 
-    create(createCategoryDto: CreateCategoryDto) {
-        const category = this.categoryRepository.create(createCategoryDto);
-        return this.categoryRepository.save(category);
+    async create(dto: CreateCategoryDto): Promise<Category | null> {
+        try {
+        const category = this.categoryRepo.create(dto);
+        return await this.categoryRepo.save(category);
+        } catch (err) {
+        console.error('Error creating category:', err);
+        return null;
+        }
     }
 
-    async findAll(options: IPaginationOptions): Promise<Pagination<Category>> {
-        const queryBuilder = this.categoryRepository.createQueryBuilder('category');
-        return paginate<Category>(queryBuilder, options);
+    async findAll(options: CategoryPaginationOptions): Promise<Pagination<Category>> {
+        const { search, searchField, sortBy, sortOrder } = options;
+        const queryBuilder = this.categoryRepo.createQueryBuilder('category');
+        const allowedSearchFields = ['name'];
+        const allowedSortFields = ['id', 'name'];
+        if (search && searchField && allowedSearchFields.includes(searchField)) {
+        queryBuilder.andWhere(
+            `LOWER(category.${searchField}) LIKE :search`,
+            { search: `%${search.toLowerCase()}%` },
+        );
+        }
+        const orderField = sortBy && allowedSortFields.includes(sortBy) ? sortBy : 'id';
+        const orderDirection: 'ASC' | 'DESC' =
+        sortOrder === 'DESC' ? 'DESC' : 'ASC';
+
+        queryBuilder.orderBy(`category.${orderField}`, orderDirection);
+
+        return paginate<Category>(queryBuilder, {
+        page: options.page,
+        limit: options.limit,
+        });
     }
 
-
-    findOne(id: string) {
-        return this.categoryRepository.findOne({ where: { id } });
+    async findOne(id: string): Promise<Category | null> {
+        try {
+        return await this.categoryRepo.findOne({ where: { id } });
+        } catch (err) {
+        console.error('Error finding category:', err);
+        return null;
+        }
     }
 
-    async update(id: string, updateCategoryDto: UpdateCategoryDto) {
-        const category = await this.categoryRepository.findOne({ where: { id } });
+    async update(id: string, dto: UpdateCategoryDto): Promise<Category | null> {
+        try {
+        const category = await this.findOne(id);
         if (!category) return null;
-        Object.assign(category, updateCategoryDto);
-        return this.categoryRepository.save(category);
+
+        Object.assign(category, dto);
+        return await this.categoryRepo.save(category);
+        } catch (err) {
+        console.error('Error updating category:', err);
+        return null;
+        }
     }
 
-    async remove(id: string) {
-        const category = await this.categoryRepository.findOne({ where: { id } });
+    async remove(id: string): Promise<Category | null> {
+        try {
+        const category = await this.findOne(id);
         if (!category) return null;
-        return this.categoryRepository.remove(category);
+
+        return await this.categoryRepo.remove(category);
+        } catch (err) {
+        console.error('Error deleting category:', err);
+        return null;
+        }
     }
     }

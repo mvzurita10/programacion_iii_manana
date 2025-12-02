@@ -1,61 +1,107 @@
-    import { Injectable, NotFoundException } from '@nestjs/common';
-    import { InjectRepository } from '@nestjs/typeorm';
-    import { Repository } from 'typeorm';
-    import { Post } from './post.entity';
-    import { CreatePostDto } from './dto/create-post.dto';
-    import { UpdatePostDto } from './dto/update-post.dto';
-    import { Category } from '../categories/category.entity';
-import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { paginate, IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { Repository } from 'typeorm';
+import { Post } from './post.entity';
+import { CreatePostDto } from './dto/create-post.dto';
+import { Category } from '../categories/category.entity';
+
+interface PostPaginationOptions extends IPaginationOptions {
+    search?: string;
+    searchField?: string;
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
+    }
+
 
     @Injectable()
     export class PostsService {
     constructor(
         @InjectRepository(Post)
-        private readonly postRepository: Repository<Post>,
-
+        private postsRepository: Repository<Post>,
         @InjectRepository(Category)
-        private readonly categoryRepository: Repository<Category>,
+        private categoriesRepository: Repository<Category>,
     ) {}
 
-    async create(createPostDto: CreatePostDto) {
-        const category = await this.categoryRepository.findOne({ where: { id: createPostDto.categoryId } });
-        if (!category) throw new NotFoundException('Categoría no encontrada');
+    async create(createPostDto: CreatePostDto): Promise<Post | null> {
+        try {
+        const category = await this.categoriesRepository.findOne({ where: { id: createPostDto.categoryId } });
+        if (!category) return null;
 
-        const post = this.postRepository.create({
-        title: createPostDto.title,
-        content: createPostDto.content,
-        category,
+        const post = this.postsRepository.create({
+            title: createPostDto.title,
+            content: createPostDto.content,
+            category: category,
         });
-        return this.postRepository.save(post);
+
+        return await this.postsRepository.save(post);
+        } catch (err) {
+        console.error('Error creating post:', err);
+        return null;
+        }
     }
 
-    async findAll(options: IPaginationOptions): Promise<Pagination<Post>> {
-        const queryBuilder = this.postRepository.createQueryBuilder('post');
+    async findAll(options: PostPaginationOptions): Promise<Pagination<Post>> {
+        const { search, searchField, sortBy, sortOrder } = options;
+        const queryBuilder = this.postsRepository.createQueryBuilder('post');
         queryBuilder.leftJoinAndSelect('post.category', 'category');
-        return paginate<Post>(queryBuilder, options);
-    }
-    
-    findOne(id: string) {
-        return this.postRepository.findOne({ where: { id }, relations: ['category'] });
+        const allowedSearchFields = ['title', 'content'];
+        const allowedSortFields = ['id', 'title'];
+        if (search && searchField && allowedSearchFields.includes(searchField)) {
+        queryBuilder.andWhere(
+            `LOWER(post.${searchField}) LIKE :search`,
+            { search: `%${search.toLowerCase()}%` },
+        );
+        }
+        const orderField = sortBy && allowedSortFields.includes(sortBy) ? sortBy : 'id';
+        const orderDirection: 'ASC' | 'DESC' =
+        sortOrder === 'DESC' ? 'DESC' : 'ASC';
+        queryBuilder.orderBy(`post.${orderField}`, orderDirection);
+        return paginate<Post>(queryBuilder, {
+        page: options.page,
+        limit: options.limit,
+        });
     }
 
-    async update(id: string, updatePostDto: UpdatePostDto) {
-        const post = await this.postRepository.findOne({ where: { id }, relations: ['category'] });
-        if (!post) throw new NotFoundException('Post no encontrado');
 
-        if (updatePostDto.categoryId) {
-        const category = await this.categoryRepository.findOne({ where: { id: updatePostDto.categoryId } });
-        if (!category) throw new NotFoundException('Categoría no encontrada');
-        post.category = category;
+    async findOne(id: string): Promise<Post | null> {
+        try {
+        return await this.postsRepository.findOne({ where: { id }, relations: ['category'] });
+        } catch (err) {
+        console.error('Error fetching post:', err);
+        return null;
+        }
+    }
+    async update(id: string, dto: CreatePostDto): Promise<Post | null> {
+        try {
+        const post = await this.findOne(id);
+        if (!post) return null;
+
+        if (dto.categoryId) {
+            const category = await this.categoriesRepository.findOne({ where: { id: dto.categoryId } });
+            if (!category) return null;
+            post.category = category;
         }
 
-        Object.assign(post, updatePostDto);
-        return this.postRepository.save(post);
+        post.title = dto.title ?? post.title;
+        post.content = dto.content ?? post.content;
+
+        return await this.postsRepository.save(post);
+        } catch (err) {
+        console.error('Error updating post:', err);
+        return null;
+        }
     }
 
-    async remove(id: string) {
-        const post = await this.postRepository.findOne({ where: { id } });
-        if (!post) throw new NotFoundException('Post no encontrado');
-        return this.postRepository.remove(post);
+    async remove(id: string): Promise<boolean> {
+        try {
+        const result = await this.postsRepository.delete(id);
+        return result.affected !== 0;
+        } catch (err) {
+        console.error('Error deleting post:', err);
+        return false;
+        }
     }
     }
+
+
