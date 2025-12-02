@@ -1,14 +1,4 @@
-    import {
-    Controller,
-    Post as HttpPost,
-    Get,
-    Param,
-    Delete,
-    Body,
-    Query,
-    NotFoundException,
-    InternalServerErrorException,
-    Put,
+import {Controller,Post as HttpPost,Get,Param,Delete,Body,Query,NotFoundException,InternalServerErrorException,Put,
     } from '@nestjs/common';
     import { PostsService } from './posts.service';
     import { CreatePostDto } from './dto/create-post.dto';
