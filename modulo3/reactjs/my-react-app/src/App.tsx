@@ -1,10 +1,11 @@
-import Greeting from './props/Greeting';
+
+import MultiSwitch from './useState/MultiSwitch';
+
 
 function App() {
   return (
     <>
-      <Greeting name="Miky" />
-      <Greeting name="Josue" />
+      <MultiSwitch />
     </>
   );
 }
