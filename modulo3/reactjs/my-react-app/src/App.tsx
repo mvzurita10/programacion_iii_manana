@@ -1,12 +1,12 @@
 
-import MoverCaja from './useRef/MoverCaja';
+import FiltroLista from './useMemo/FiltroLista';
 
 
 function App() {
 
   return (
     <>
-      <MoverCaja />
+      <FiltroLista />
     </>
   );
 }
