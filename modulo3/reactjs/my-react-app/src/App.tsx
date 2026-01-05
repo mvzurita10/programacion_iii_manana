@@ -1,14 +1,11 @@
 
-import FiltroLista from './useMemo/FiltroLista';
+import { BuscadorUseTransition } from './useTransition/buscadorUseTransition';
 
 
-function App() {
-
+export default function App() {
   return (
     <>
-      <FiltroLista />
+      <BuscadorUseTransition />
     </>
   );
 }
-
-export default App;
