@@ -1,11 +1,12 @@
 
-import { BuscadorUseTransition } from './useTransition/buscadorUseTransition';
+import RegistroUsuario from './useDeferredValue/RegistroUsuario';
+
 
 
 export default function App() {
   return (
     <>
-      <BuscadorUseTransition />
+      <RegistroUsuario />
     </>
   );
 }
