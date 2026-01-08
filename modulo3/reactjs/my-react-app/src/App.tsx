@@ -1,12 +1,12 @@
 
-import RegistroUsuario from './useDeferredValue/RegistroUsuario';
+import ListaPosts from './fetch/ListaPosts';
 
 
 
 export default function App() {
   return (
     <>
-      <RegistroUsuario />
+      <ListaPosts />
     </>
   );
 }
