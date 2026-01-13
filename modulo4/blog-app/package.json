@@ -1,5 +1,5 @@
 {
-  "name": "react-antd-demo",
+  "name": "blog-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "antd": "^6.2.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@fontsource/roboto": "^5.2.9",
+    "@mui/icons-material": "^7.3.7",
+    "@mui/material": "^7.3.7",
+    "axios": "^1.13.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.12.0"
