@@ -1,6 +1,8 @@
+import { useRoutes } from "react-router-dom";
+import { appRoutes } from "./routes";
 import type { JSX } from "react";
-import TestMUI from "./components/TestMUI";
 
 export default function App(): JSX.Element {
-  return <TestMUI />;
+  const routes = useRoutes(appRoutes);
+  return <>{routes}</>;
 }
