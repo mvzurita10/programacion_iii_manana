@@ -1,4 +1,4 @@
-import { publicRoutes } from "./publicRoutes";
+import { publicRoutes } from "./public.routes";
 //import { privateRoutes } from "./privateRoutes";
 import type { RouteObject } from "react-router-dom";
 
