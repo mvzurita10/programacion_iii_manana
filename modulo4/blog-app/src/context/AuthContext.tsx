@@ -1,24 +1,23 @@
-import { createContext, useContext, useMemo, useState } from "react";
-import type { ReactNode } from "react";
-import { loginApi, registerApi } from "../services/auth.service";
+import { createContext, useContext, useMemo, useState, type JSX } from "react";
 
-type User = {
-    username: string;
+export type AuthUser = {
+    id?: string;
     email?: string;
-    };
+    username?: string;
+    role?: string;
+};
 
-type AuthContextType = {
-    user: User | null;
+type AuthContextValue = {
+    user: AuthUser | null;
     token: string | null;
-    login: (payload: { username: string; password: string }) => Promise<void>;
-    register: (payload: { username: string; email: string; password: string }) => Promise<void>;
+    setSession: (payload: { user: AuthUser; token: string }) => void;
     logout: () => void;
 };
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User | null>(() => {
+export function AuthProvider({ children }: { children: React.ReactNode }): JSX.Element {
+    const [user, setUser] = useState<AuthUser | null>(() => {
         const raw = localStorage.getItem("auth_user");
         return raw ? JSON.parse(raw) : null;
     });
@@ -27,33 +26,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return localStorage.getItem("auth_token");
     });
 
-    const login = async (payload: { username: string; password: string }) => {
-        const token = await loginApi(payload);
-
-        setToken(token);
-        setUser({ username: payload.username });
-
-        localStorage.setItem("auth_token", token);
-        localStorage.setItem(
-        "auth_user",
-        JSON.stringify({ username: payload.username })
-        );
-    };
-
-    const register = async (payload: { username: string; email: string; password: string }) => {
-        const token = await registerApi(payload);
-
-        setToken(token);
-        setUser({ username: payload.username, email: payload.email });
-
-        localStorage.setItem("auth_token", token);
-        localStorage.setItem(
-        "auth_user",
-        JSON.stringify({
-            username: payload.username,
-            email: payload.email,
-        })
-        );
+    const setSession = (payload: { user: AuthUser; token: string }) => {
+        setUser(payload.user);
+        setToken(payload.token);
+        localStorage.setItem("auth_user", JSON.stringify(payload.user));
+        localStorage.setItem("auth_token", payload.token);
     };
 
     const logout = () => {
@@ -63,30 +40,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("auth_token");
     };
 
-    const value = useMemo(
-        () => ({
-        user,
-        token,
-        login,
-        register,
-        logout,
-        }),
-        [user, token]
-    );
+    const value = useMemo(() => ({ user, token, setSession, logout }), [user, token]);
 
-    return (
-        <AuthContext.Provider value={value}>
-        {children}
-        </AuthContext.Provider>
-    );
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth(): AuthContextType {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error("useAuth debe usarse dentro de AuthProvider");
-    }
-    return context;
+export function useAuth(): AuthContextValue {
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error("useAuth debe usarse dentro de AuthProvider");
+    return ctx;
 }
-
-
