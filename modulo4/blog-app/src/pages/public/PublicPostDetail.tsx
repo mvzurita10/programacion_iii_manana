@@ -1,7 +1,9 @@
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Box, Button, Chip, CircularProgress, Stack, Typography } from "@mui/material";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { getPublicPostById, type PublicPostDto } from "../../services/posts.service";
+import { getPublicPostById } from "../../services/posts.service";
+import type { PublicPostDto } from "../../services/posts.service";
+import type { JSX } from "react";
 
 export default function PublicPostDetail(): JSX.Element {
   const { id } = useParams();
@@ -15,8 +17,8 @@ export default function PublicPostDetail(): JSX.Element {
         if (!id) throw new Error("missing id");
         setLoading(true);
         setError(null);
-        const data: any = await getPublicPostById(id);
-        setPost(data.data);
+        const data = await getPublicPostById(id);
+        setPost(data);
       } catch {
         setError("No se pudo cargar el detalle del post.");
       } finally {

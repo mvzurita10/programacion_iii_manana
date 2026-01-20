@@ -5,17 +5,17 @@ import PublicFooter from "../components/public/PublicFooter";
 import type { JSX } from "react";
 
 export default function PublicLayout(): JSX.Element {
-    return (
-        <Box sx={{ minHeight: "100vh", bgcolor: "background.default", color: "text.primary" }}>
-        <PublicHeader />
+  return (
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default", color: "text.primary" }}>
+      <PublicHeader />
 
-        <Toolbar />
+      <Toolbar />
 
-        <Container sx={{ py: 3 }}>
-            <Outlet />
-        </Container>
+      <Container sx={{ py: 3 }}>
+        <Outlet />
+      </Container>
 
-        <PublicFooter />
-        </Box>
-    );
+      <PublicFooter />
+    </Box>
+  );
 }

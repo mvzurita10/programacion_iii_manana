@@ -1,104 +1,124 @@
-// layouts/DashboardLayout.tsx
 import {
-    Box,
-    Drawer,
-    List,
-    ListItem,
-    ListItemText,
-    AppBar,
-    Toolbar,
-    Typography,
-    Avatar,
-    Menu,
-    MenuItem,
-    ListItemButton,
+  AppBar,
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
 } from "@mui/material";
-import { Outlet, useNavigate } from "react-router-dom";
-import { useState, type JSX } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import type { JSX } from "react";
 
-interface MenuItemType {
-    text: string;
-    path: string;
-}
+import MenuIcon from "@mui/icons-material/Menu";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import CategoryIcon from "@mui/icons-material/Category";
+import ArticleIcon from "@mui/icons-material/Article";
+import GroupIcon from "@mui/icons-material/Group";
 
-const menuItems: MenuItemType[] = [
-    { text: "Posts", path: "/dashboard/posts" },
-    { text: "Categorías", path: "/dashboard/categories" },
-    { text: "Usuarios", path: "/dashboard/users" },
-    ];
+const drawerWidth = 260;
 
-    export default function DashboardLayout(): JSX.Element {
-    const navigate = useNavigate();
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+type NavItem = {
+  label: string;
+  to: string;
+  icon: JSX.Element;
+  roles?: string[];
+};
 
-    const handleUserClick = (e: React.MouseEvent<HTMLElement>): void => {
-        setAnchorEl(e.currentTarget);
-    };
+const navItems: NavItem[] = [
+  { label: "Inicio", to: "/dashboard", icon: <DashboardIcon /> },
+  { label: "Categorías", to: "/dashboard/categories", icon: <CategoryIcon /> },
+  { label: "Posts", to: "/dashboard/posts", icon: <ArticleIcon /> },
+  { label: "Users", to: "/dashboard/users", icon: <GroupIcon />, roles: ["ADMIN"] },
+];
 
-    const handleClose = (): void => {
-        setAnchorEl(null);
-    };
+export function DashboardLayout(): JSX.Element {
+  const { user, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const handleLogout = (): void => {
-        localStorage.clear();
-        navigate("/");
-    };
+  const role = (user?.role || "USER").toUpperCase();
+  const visibleItems = navItems.filter((i) => !i.roles || i.roles.map((x) => x.toUpperCase()).includes(role));
 
-    return (
-        <Box display="flex">
-        <Drawer
-            variant="permanent"
-            sx={{ width: 200, [`& .MuiDrawer-paper`]: { width: 200 } }}
-        >
-            <Toolbar />
-            <List>
-            {menuItems.map((item) => (
-                <ListItem disablePadding key={item.text}>
-                <ListItemButton onClick={() => navigate(item.path)}>
-                    <ListItemText primary={item.text} />
-                </ListItemButton>
-                </ListItem>
-            ))}
-            </List>
-        </Drawer>
-        <Box flexGrow={1}>
-            <AppBar position="static" sx={{ bgcolor: "#222" }}>
-            <Toolbar sx={{ justifyContent: "space-between" }}>
-                <Typography variant="h6">
-                <img
-                    src="https://static.vecteezy.com/system/resources/thumbnails/022/791/223/small/blog-site-blogger-png.png"
-                    alt="logo"
-                    width="32"
-                    style={{ verticalAlign: "middle", marginRight: 8 }}
-                />
-                BlogApp Admin
-                </Typography>
+  const onGo = (to: string) => {
+    navigate(to);
+    setOpen(false);
+  };
 
-                <Box
-                display="flex"
-                alignItems="center"
-                gap={1}
-                onClick={handleUserClick}
-                sx={{ cursor: "pointer" }}
-                >
-                <Avatar src="/user.png" />
-                <Typography>Admin User</Typography>
-                </Box>
+  const onLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
 
-                <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                >
-                <MenuItem onClick={handleLogout}>Salir</MenuItem>
-                </Menu>
-            </Toolbar>
-            </AppBar>
+  const drawer = (
+    <Box sx={{ width: drawerWidth }} role="presentation">
+      <Box sx={{ px: 2, py: 2 }}>
+        <Typography variant="h6">Panel</Typography>
+        <Typography variant="body2" color="text.secondary">
+          {user?.email || user?.username || ""}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          Rol: {role}
+        </Typography>
+      </Box>
 
-            <Box p={3}>
-            <Outlet />
-            </Box>
-        </Box>
-        </Box>
-    );
+      <Divider />
+
+      <List>
+        {visibleItems.map((item) => {
+          const selected = location.pathname === item.to;
+          return (
+            <ListItemButton key={item.to} selected={selected} onClick={() => onGo(item.to)}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          );
+        })}
+      </List>
+
+      <Box sx={{ px: 2, py: 2 }}>
+        <Button fullWidth variant="outlined" onClick={onLogout}>
+          Logout
+        </Button>
+      </Box>
+    </Box>
+  );
+
+  return (
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default", color: "text.primary" }}>
+      <AppBar position="fixed">
+        <Toolbar>
+          <IconButton color="inherit" edge="start" onClick={() => setOpen(true)} sx={{ mr: 2 }}>
+            <MenuIcon />
+          </IconButton>
+
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Dashboard
+          </Typography>
+
+          <Button color="inherit" onClick={() => navigate("/")}>
+            Ir a público
+          </Button>
+        </Toolbar>
+      </AppBar>
+
+      <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
+        {drawer}
+      </Drawer>
+
+      <Toolbar />
+
+      <Box sx={{ p: 3 }}>
+        <Outlet />
+      </Box>
+    </Box>
+  );
 }

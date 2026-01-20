@@ -22,7 +22,7 @@ function useDebouncedValue<T>(value: T, delayMs: number): T {
   return debounced;
 }
 
-export default function CategoriesPage(): JSX.Element {
+export function Categories(): JSX.Element {
   const { notify } = useUi();
   const [sp, setSp] = useSearchParams();
 
@@ -127,7 +127,6 @@ export default function CategoriesPage(): JSX.Element {
   };
 
   const askDelete = (c: CategoryDto) => {
-    console.log('Abriendo diálogo de confirmación para:', c);
     setToDelete(c);
     setConfirmOpen(true);
   };
@@ -180,8 +179,12 @@ export default function CategoriesPage(): JSX.Element {
                   <TableRow key={c.id}>
                     <TableCell>{c.name}</TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={() => onEdit(c)} aria-label="editar"><EditIcon /></IconButton>
-                      <IconButton onClick={() => askDelete(c)} aria-label="eliminar"><DeleteIcon /></IconButton>
+                      <IconButton onClick={() => onEdit(c)} aria-label="editar">
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton onClick={() => askDelete(c)} aria-label="eliminar">
+                        <DeleteIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
