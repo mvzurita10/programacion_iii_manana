@@ -71,3 +71,8 @@ export default defineConfig([
   },
 ])
 ```
+
+npm i -D jest @types/jest jest-environment-jsdom
+npm i -D --legacy-peer-deps @testing-library/react @testing-library/jest-dom @testing-library/user-event 
+npm i -D --legacy-peer-deps babel-jest @babel/preset-env @babel/preset-react @babel/preset-typescript 
+npm i -D --legacy-peer-deps identity-obj-proxy
